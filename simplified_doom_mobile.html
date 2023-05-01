@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simplified Mobile Doom</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+    }
+    .controls {
+      display: flex;
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+    }
+    button {
+      background-color: gray;
+      color: white;
+      padding: 20px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+    .shoot-button {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: red;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas" width="400" height="800"></canvas>
+  <div class="controls">
+    <button id="leftButton">&larr;</button>
+    <button id="rightButton">&rarr;</button>
+  </div>
+  <button id="shootButton" class="shoot-button">Shoot</button>
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    const leftButton = document.getElementById("leftButton");
+    const rightButton = document.getElementById("rightButton");
+    const shootButton = document.getElementById("shootButton");
+
+    const player = {
+      x: canvas.width / 2,
+      y: canvas.height - 60,
+      width: 30,
+      height: 30,
+      speed: 10
+    };
+
+    const enemy = {
+      x: canvas.width / 2,
+      y: 60,
+      width: 30,
+      height: 30,
+      speed: 3
+    };
+
+    let bullets = [];
+    let lastShotTime = 0;
+
+    function drawPlayer() {
+      ctx.fillStyle = "blue";
+      ctx.fillRect(player.x, player.y, player.width, player.height);
+    }
+
+    function drawEnemy() {
+      ctx.fillStyle = "red";
+      ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+    }
+
+    function drawBullets() {
+      ctx.fillStyle = "green";
+      bullets.forEach((bullet, index) => {
+        bullet.y -= bullet.speed;
+        if (bullet.y < 0) {
+          bullets.splice(index, 1);
+        } else {
+          ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
+        }
+      });
+    }
+
+    function movePlayer(direction) {
+      if (direction === "left" && player.x > 0) {
+        player.x -= player.speed;
+      } else if (direction === "right" && player.x < canvas.width - player.width) {
+        player.x += player.speed;
+      }
+    }
+
+    function shoot() {
+      const currentTime = new Date().getTime();
+      if (currentTime - lastShotTime > 300) {
+        bullets.push({
+          x: player.x + player.width / 
